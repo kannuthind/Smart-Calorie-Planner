@@ -1,1 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Calorie Planner</title>
+  <meta name="description" content="A clean calorie planner demo using BMR/TDEE with a modern dashboard (HTML/CSS/JS)." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="../../index.html#projects">← Back to Portfolio</a>
+
+      <div class="topbar-right">
+        <span class="pill">Project • Smart Calorie Planner</span>
+        <button class="iconbtn" id="themeToggle" type="button" aria-label="Toggle theme">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <p class="kicker">Health-focused • Frontend project</p>
+        <h1>Smart Calorie Planner</h1>
+        <p class="sub">
+          Calculates daily calorie needs using BMR + activity (TDEE), then suggests a goal range and simple macros.
+          This is a portfolio demo — always prioritize health and consult a professional for personalized advice.
+        </p>
+        <div class="trust">
+          <span>✅ Real formula</span>
+          <span>✅ Mobile-friendly</span>
+          <span>✅ Dashboard UI</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Your info</h2>
+          <p class="muted">Enter values to generate your plan instantly.</p>
+        </div>
+
+        <form id="form" class="grid" autocomplete="off">
+          <label class="field">
+            <span>Age</span>
+            <input id="age" type="number" min="13" max="90" value="20" required />
+          </label>
+
+          <label class="field">
+            <span>Sex</span>
+            <select id="sex" required>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Height (cm)</span>
+            <input id="height" type="number" min="120" max="230" value="170" required />
+          </label>
+
+          <label class="field">
+            <span>Weight (kg)</span>
+            <input id="weight" type="number" min="35" max="250" value="70" required />
+          </label>
+
+          <label class="field span-2">
+            <span>Activity level</span>
+            <select id="activity" required>
+              <option value="1.2">Sedentary (little exercise)</option>
+              <option value="1.375">Light (1–3 days/week)</option>
+              <option value="1.55" selected>Moderate (3–5 days/week)</option>
+              <option value="1.725">Active (6–7 days/week)</option>
+              <option value="1.9">Very active (physical job / athlete)</option>
+            </select>
+          </label>
+
+          <label class="field span-2">
+            <span>Goal</span>
+            <select id="goal" required>
+              <option value="lose">Lose weight (gentle)</option>
+              <option value="maintain" selected>Maintain</option>
+              <option value="gain">Gain weight (gentle)</option>
+            </select>
+          </label>
+
+          <div class="actions span-2">
+            <button class="btn" type="submit">Calculate</button>
+            <button class="btn ghost" id="resetBtn" type="button">Reset</button>
+          </div>
+        </form>
+
+        <p class="fineprint">
+          Safety note: This tool avoids extreme calorie targets. If you’re under 18, consider talking to a trusted adult
+          or healthcare professional for personalized guidance.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h3>Your results</h3>
+        <p class="muted">Estimated daily needs + a simple plan.</p>
+      </div>
+
+      <!-- DASHBOARD (now 4 cards) -->
+      <div class="dashboard">
+        <div class="card stat">
+          <div class="label">BMR</div>
+          <div class="value" id="bmr">—</div>
+          <div class="muted">Calories/day at rest</div>
+        </div>
+
+        <div class="card stat">
+          <div class="label">TDEE</div>
+          <div class="value" id="tdee">—</div>
+          <div class="muted">Maintenance calories/day</div>
+        </div>
+
+        <div class="card stat highlight">
+          <div class="label">Goal range</div>
+          <div class="value" id="goalRange">—</div>
+          <div class="muted" id="goalNote">—</div>
+        </div>
+
+        <div class="card stat">
+          <div class="label">BMI</div>
+          <div class="value" id="bmi">—</div>
+          <div class="muted" id="bmiNote">—</div>
+        </div>
+      </div>
+
+      <!-- MACROS + TIPS -->
+      <div class="grid-2">
+        <div class="card">
+          <h3>Macro split (simple)</h3>
+          <p class="muted">A basic starting point (you can adjust with a professional).</p>
+
+          <div class="macro">
+            <div class="macro-row">
+              <span>Protein</span>
+              <strong id="protein">—</strong>
+            </div>
+            <div class="bar"><div id="barProtein" class="fill"></div></div>
+          </div>
+
+          <div class="macro">
+            <div class="macro-row">
+              <span>Carbs</span>
+              <strong id="carbs">—</strong>
+            </div>
+            <div class="bar"><div id="barCarbs" class="fill"></div></div>
+          </div>
+
+          <div class="macro">
+            <div class="macro-row">
+              <span>Fats</span>
+              <strong id="fats">—</strong>
+            </div>
+            <div class="bar"><div id="barFats" class="fill"></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Healthy habits</h3>
+          <ul class="list" id="tips">
+            <li class="muted">Calculate to see tips.</li>
+          </ul>
+
+          <div class="copy-area">
+            <button class="btn small" id="copyBtn" type="button">Copy summary</button>
+            <button class="btn small ghost" id="saveBtn" type="button">Save locally</button>
+          </div>
+
+          <p class="fineprint">
+            “Save locally” stores your latest inputs in your browser (localStorage). No server.
+          </p>
+        </div>
+      </div>
+
+      <!-- WEEKLY PLAN -->
+      <div class="card weekly">
+        <div class="weekly-head">
+          <h3>Weekly plan</h3>
+          <p class="muted">Simple 7-day suggestion to stay consistent. (Demo guidance)</p>
+        </div>
+
+        <div class="weekly-grid" id="weekGrid"></div>
+
+        <div class="weekly-footer">
+          <div>
+            <div class="muted">Weekly average</div>
+            <div class="weekly-avg" id="weekAvg">—</div>
+          </div>
+          <div class="muted" id="weekNote">Aim for consistency over perfection.</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>© <span id="year"></span> Smart Calorie Planner • Built with HTML/CSS/JS</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
 
